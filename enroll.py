@@ -5,7 +5,9 @@ class Enroll:
     dict_words = []
 
     def __init__(self):
-        pass
+        with open('words.txt') as words_file:
+            self.dict_words = words_file.read().splitlines()
+        words_file.close()
 
     def check_username_valid(self, username):
         """
@@ -31,6 +33,8 @@ class Enroll:
         :param password:
         :return:
         """
+        stripped_password = re.sub('\d', '', password)
+
         if not re.match("^[A-Za-z0-9!@#$%^&*()_+=:.,/|-]{8,100}$", password):
             print("Invalid password. Password must be between 8 and 100 characters long and only contain alphanumeric "
                   "characters and standard english keyboard symbols.")
@@ -39,18 +43,12 @@ class Enroll:
         if re.match("^[0-9]*$", password):
             print("Invalid password. Password must contain letters.")
             return False
-        elif re.sub('0-9', '', password) in self.dict_words:
+        elif stripped_password in self.dict_words:
             print("Invalid password. Password must not be a dictionary word or a dictionary word starting/ending with "
                   "numbers.")
             return False
         else:
             return True
-
-    def parse_dict(self):
-        f = open('words.txt', 'r')
-        with open('words.txt') as f:
-            self.dict_words = f.read().splitlines()
-        f.close()
 
     def enroll_username(self):
         print("enroll user")

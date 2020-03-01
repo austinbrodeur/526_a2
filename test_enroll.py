@@ -21,3 +21,4 @@ class TestEnroll(TestCase):
         self.assertTrue(self.enroll.check_password_valid("Goodpassword-9256"))
         self.assertFalse(self.enroll.check_password_valid("123456789"))
         self.assertFalse(self.enroll.check_password_valid("123456789"))
+        self.assertFalse(self.enroll.check_password_valid("terrifically"))
