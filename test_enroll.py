@@ -1,6 +1,7 @@
 from unittest import TestCase
 from enroll import Enroll
 
+
 class TestEnroll(TestCase):
     enroll = Enroll()
 
@@ -25,6 +26,10 @@ class TestEnroll(TestCase):
         self.assertFalse(self.enroll.check_password_valid("terrifically"))
         self.assertFalse(self.enroll.check_password_valid("terrifically1234"))
         self.assertFalse(self.enroll.check_password_valid("1234terrifically"))
+
+    def test_check_for_user(self):
+        self.assertFalse(self.enroll.check_for_user("username"))
+        self.assertTrue(self.enroll.check_for_user("gloomyjim"))
 
     def test_enroll_user(self):
         self.assertTrue(self.enroll.enroll_user("username", "GoodPassword-9256"))

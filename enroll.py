@@ -1,7 +1,7 @@
 import re
 import sys
-import secrets
-from argon2 import PasswordHasher # Ensure you have done pip install argon2-cffi for this dependency to work
+import os
+from argon2 import PasswordHasher  # Ensure you have done pip install argon2-cffi for this dependency to work
 
 
 class Enroll:
@@ -16,7 +16,7 @@ class Enroll:
 
     def check_username_valid(self, username):
         """
-        Ensures that the username is good (alphanumeric chars and underscores only, between 5 and 15 chars) before
+        Checks that the username is good (alphanumeric chars and underscores only, between 5 and 15 chars) before
         enrolling. I picked the range of 5-15 arbitrarily, but I felt allowing usernames to be very short or very
         long is a poor idea.
 
@@ -32,7 +32,7 @@ class Enroll:
 
     def check_password_valid(self, password):
         """
-        Ensures that the password entered is good before enrolling. Again, I arbitrarily picked lengths between 8 and
+        Checks that the password entered is good before enrolling. Again, I arbitrarily picked lengths between 8 and
         100 (the long max length is to support secure password generators).
 
         :param password:
@@ -55,22 +55,56 @@ class Enroll:
         else:
             return True
 
+    def check_for_user(self, username):
+        """
+        Checks that the username chosen has not already been registered.
+
+        :param username:
+        :return:
+        """
+        users_file = open("users.txt", "r")
+        file_content = users_file.readlines()
+        for line in file_content:
+            if (line.split(":")[0]) == username:
+                print("Username already in use")
+                users_file.close()
+                return False
+            else:
+                users_file.close()
+                return True
+
     def enroll_user(self, username, password):
-        users_file = open("users.txt", "w+")
-        users_file.close()
-        users_file = open("users.txt", "a")
+        """
+        Securely enrolls a new user into the user database
 
-        if self.check_username_valid(username) and self.check_password_valid(password):
-            hashed_password = self.ph.hash(password) # According to the argon2 docs, the passwords are automatically
-            # salted and stretched via this library, so no code is included to do so manually (I'd probably make a
-            # mistake doing it manually anyways)
+        :param username:
+        :param password:
+        :return:
+        """
+        if not os.path.isfile("users.txt"):
+            users_file = open("users.txt", "w+")
+            users_file.close()
 
-            users_file.write(username + ":" + hashed_password + "\n")
+        if self.check_username_valid(username) and self.check_password_valid(password) and self.check_for_user(
+                username):
+
+            users_file_append = open("users.txt", "a")
+            hashed_password = self.ph.hash(password)  # According to the argon2 docs, the passwords are automatically
+            # salted and stretched via this library, so no code is included to do so manually
+
+            users_file_append.write(username + ":" + hashed_password + "\n")
 
             print("accepted")
-            users_file.close()
+            users_file_append.close()
             sys.exit(0)
         else:
             print("rejected")
-            users_file.close()
             sys.exit(-1)
+
+# def main():
+#     enroll = Enroll()
+#     username = input("Enter a username to enroll: ")
+#     password = input("Enter a password to enroll: ")
+#     enroll.enroll_user(username, password)
+#
+# main()
