@@ -1,8 +1,13 @@
 import re
+import sys
+import secrets
+from argon2 import PasswordHasher # Ensure you have done pip install argon2-cffi for this dependency to work
 
 
 class Enroll:
     dict_words = []
+    password_file = None
+    ph = PasswordHasher()
 
     def __init__(self):
         with open('words.txt') as words_file:
@@ -50,8 +55,22 @@ class Enroll:
         else:
             return True
 
-    def enroll_username(self):
-        print("enroll user")
+    def enroll_user(self, username, password):
+        users_file = open("users.txt", "w+")
+        users_file.close()
+        users_file = open("users.txt", "a")
 
-    def enroll_password(self):
-        print("enroll pass")
+        if self.check_username_valid(username) and self.check_password_valid(password):
+            hashed_password = self.ph.hash(password) # According to the argon2 docs, the passwords are automatically
+            # salted and stretched via this library, so no code is included to do so manually (I'd probably make a
+            # mistake doing it manually anyways)
+
+            users_file.write(username + ":" + hashed_password + "\n")
+
+            print("accepted")
+            users_file.close()
+            sys.exit(0)
+        else:
+            print("rejected")
+            users_file.close()
+            sys.exit(-1)
