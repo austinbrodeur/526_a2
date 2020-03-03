@@ -18,7 +18,7 @@ class Enroll:
         """
         Checks that the username is good (alphanumeric chars and underscores only, between 5 and 15 chars) before
         enrolling. I picked the range of 5-15 arbitrarily, but I felt allowing usernames to be very short or very
-        long is a poor idea.
+        long is a poor idea. Returns True is username is valid.
 
         :param username:
         :return:
@@ -33,7 +33,7 @@ class Enroll:
     def check_password_valid(self, password):
         """
         Checks that the password entered is good before enrolling. Again, I arbitrarily picked lengths between 8 and
-        100 (the long max length is to support secure password generators).
+        100 (the long max length is to support secure password generators). Returns True if password is valid.
 
         :param password:
         :return:
@@ -57,7 +57,7 @@ class Enroll:
 
     def check_for_user(self, username):
         """
-        Checks that the username chosen has not already been registered.
+        Checks that the username chosen has not already been registered. Returns True if username is in use.
 
         :param username:
         :return:
@@ -65,13 +65,16 @@ class Enroll:
         users_file = open("users.txt", "r")
         file_content = users_file.readlines()
         for line in file_content:
-            if (line.split(":")[0]) == username:
-                print("Username already in use")
-                users_file.close()
-                return False
-            else:
-                users_file.close()
-                return True
+            try:
+                check_username = line.split(":")[0]
+                if check_username == username:
+                    print("Username already in use")
+                    users_file.close()
+                    return True
+            except IndexError:
+                pass
+        users_file.close()
+        return False
 
     def enroll_user(self, username, password):
         """
@@ -83,10 +86,19 @@ class Enroll:
         """
         if not os.path.isfile("users.txt"):
             users_file = open("users.txt", "w+")
+            users_file.write("\n")
             users_file.close()
 
-        if self.check_username_valid(username) and self.check_password_valid(password) and self.check_for_user(
-                username):
+        if not self.check_username_valid(username): # split if statements for easier debugging
+            print("rejected")
+            sys.exit(-1)
+        if not self.check_password_valid(password):
+            print("rejected")
+            sys.exit(-1)
+        if self.check_for_user(username):
+            print("rejected")
+            sys.exit(-1)
+        else:
 
             users_file_append = open("users.txt", "a")
             hashed_password = self.ph.hash(password)
@@ -96,17 +108,3 @@ class Enroll:
             print("accepted")
             users_file_append.close()
             sys.exit(0)
-        else:
-            print("rejected")
-            sys.exit(-1)
-
-
-
-
-# def main():
-#     enroll = Enroll()
-#     username = input("Enter a username to enroll: ")
-#     password = input("Enter a password to enroll: ")
-#     enroll.enroll_user(username, password)
-#
-# main()
