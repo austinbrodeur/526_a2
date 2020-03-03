@@ -32,4 +32,4 @@ class TestEnroll(TestCase):
         self.assertTrue(self.enroll.check_for_user("gloomyjim"))
 
     def test_enroll_user(self):
-        self.assertTrue(self.enroll.enroll_user("username", "GoodPassword-9256"))
+        self.assertTrue(self.enroll.enroll_user("goodusername", "goodpassword123"))

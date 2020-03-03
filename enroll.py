@@ -89,8 +89,7 @@ class Enroll:
                 username):
 
             users_file_append = open("users.txt", "a")
-            hashed_password = self.ph.hash(password)  # According to the argon2 docs, the passwords are automatically
-            # salted and stretched via this library, so no code is included to do so manually
+            hashed_password = self.ph.hash(password)
 
             users_file_append.write(username + ":" + hashed_password + "\n")
 
@@ -100,6 +99,9 @@ class Enroll:
         else:
             print("rejected")
             sys.exit(-1)
+
+
+
 
 # def main():
 #     enroll = Enroll()
