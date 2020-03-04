@@ -1,4 +1,4 @@
-from argon2 import PasswordHasher # Ensure you have done pip install argon2-cffi for this dependency to work
+from argon2 import PasswordHasher  # Ensure you have done pip install argon2-cffi for this dependency to work
 from argon2 import exceptions
 
 
@@ -27,15 +27,24 @@ class Authenticate:
                         users_file.close()
                         return True
                     else:
-                        print("Invalid username or password")
+                        print("Access denied")
                         users_file.close()
                         return False
             except IndexError:
                 pass
             except exceptions.VerifyMismatchError:
-                print("Invalid username or password")
+                print("Access denied")
                 users_file.close()
                 return False
-        print("Invalid username or password")
+        print("Access denied")
         users_file.close()
         return False
+
+
+def main():
+    authenticate = Authenticate()
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    authenticate.auth_user(username, password)
+
+main()

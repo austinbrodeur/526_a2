@@ -89,7 +89,7 @@ class Enroll:
             users_file.write("\n")
             users_file.close()
 
-        if not self.check_username_valid(username): # split if statements for easier debugging
+        if not self.check_username_valid(username):  # split if statements for easier debugging
             print("rejected")
             sys.exit(-1)
         if not self.check_password_valid(password):
@@ -108,3 +108,12 @@ class Enroll:
             print("accepted")
             users_file_append.close()
             sys.exit(0)
+
+
+def main():
+    enroll = Enroll()
+    username = input("Enter a username to enroll: ")
+    password = input("Enter a password to enroll: ")
+    enroll.enroll_user(username, password)
+
+main()
